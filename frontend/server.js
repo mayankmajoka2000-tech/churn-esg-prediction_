@@ -6,229 +6,313 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-// Live FastAPI backend on Render
 const API_BASE_URL =
   process.env.API_BASE_URL ||
-  "https://churn-esg-prediction.onrender.com";
+  "http://localhost:8000";
+
+
+/* =========================
+   EXPRESS CONFIGURATION
+========================= */
 
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
 
-app.use(express.urlencoded({ extended: true }));
+app.set(
+  "views",
+  path.join(__dirname, "views")
+);
+
+
+/* =========================
+   MIDDLEWARE
+========================= */
+
+app.use(
+  express.urlencoded({
+    extended: true
+  })
+);
+
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
 
-// Default customer values
+app.use(
+  express.static(
+    path.join(__dirname, "public")
+  )
+);
+
+
+/* =========================
+   DEFAULT CUSTOMER VALUES
+========================= */
+
 const defaults = {
+
   gender: "Female",
+
   SeniorCitizen: "0",
+
   Partner: "Yes",
+
   Dependents: "No",
 
   tenure: "12",
+
   Contract: "Month-to-month",
+
   PaperlessBilling: "Yes",
+
   PaymentMethod: "Electronic check",
 
   MonthlyCharges: "70.35",
+
   TotalCharges: "845.50",
 
   PhoneService: "Yes",
+
   MultipleLines: "No",
 
   InternetService: "Fiber optic",
+
   OnlineSecurity: "No",
+
   OnlineBackup: "Yes",
+
   DeviceProtection: "No",
+
   TechSupport: "No",
+
   StreamingTV: "Yes",
+
   StreamingMovies: "No"
+
 };
 
 
-// =========================
-// HOME PAGE
-// =========================
+/* =========================
+   HOME PAGE
+========================= */
 
 app.get("/", (req, res) => {
+
   res.render("index", {
+
     values: defaults,
+
     error: null,
+
     apiBaseUrl: API_BASE_URL
+
   });
+
 });
 
 
-// =========================
-// PREDICTION
-// =========================
+/* =========================
+   PREDICTION
+========================= */
 
 app.post("/predict", async (req, res) => {
 
-  // Keep submitted values so the form can be restored
   const values = {
     ...defaults,
     ...req.body
   };
 
-  // Convert form strings into the correct Python/Pydantic types
+
+  /* =========================
+     PREPARE API PAYLOAD
+  ========================== */
+
   const payload = {
+
     gender: values.gender,
 
-    SeniorCitizen: Number(values.SeniorCitizen),
+    SeniorCitizen:
+      Number(values.SeniorCitizen),
 
     Partner: values.Partner,
-    Dependents: values.Dependents,
 
-    tenure: Number(values.tenure),
+    Dependents:
+      values.Dependents,
 
-    Contract: values.Contract,
+    tenure:
+      Number(values.tenure),
 
-    PaperlessBilling: values.PaperlessBilling,
+    Contract:
+      values.Contract,
 
-    PaymentMethod: values.PaymentMethod,
+    PaperlessBilling:
+      values.PaperlessBilling,
 
-    MonthlyCharges: Number(values.MonthlyCharges),
+    PaymentMethod:
+      values.PaymentMethod,
 
-    TotalCharges: Number(values.TotalCharges),
+    MonthlyCharges:
+      Number(values.MonthlyCharges),
 
-    PhoneService: values.PhoneService,
+    TotalCharges:
+      Number(values.TotalCharges),
 
-    MultipleLines: values.MultipleLines,
+    PhoneService:
+      values.PhoneService,
 
-    InternetService: values.InternetService,
+    MultipleLines:
+      values.MultipleLines,
 
-    OnlineSecurity: values.OnlineSecurity,
+    InternetService:
+      values.InternetService,
 
-    OnlineBackup: values.OnlineBackup,
+    OnlineSecurity:
+      values.OnlineSecurity,
 
-    DeviceProtection: values.DeviceProtection,
+    OnlineBackup:
+      values.OnlineBackup,
 
-    TechSupport: values.TechSupport,
+    DeviceProtection:
+      values.DeviceProtection,
 
-    StreamingTV: values.StreamingTV,
+    TechSupport:
+      values.TechSupport,
 
-    StreamingMovies: values.StreamingMovies
+    StreamingTV:
+      values.StreamingTV,
+
+    StreamingMovies:
+      values.StreamingMovies
+
   };
-
-
-  // Basic numeric validation
-  if (
-    Number.isNaN(payload.SeniorCitizen) ||
-    Number.isNaN(payload.tenure) ||
-    Number.isNaN(payload.MonthlyCharges) ||
-    Number.isNaN(payload.TotalCharges)
-  ) {
-    return res.render("index", {
-      values,
-      error: "Please enter valid numeric values for tenure and charges.",
-      apiBaseUrl: API_BASE_URL
-    });
-  }
 
 
   try {
 
-    console.log("Sending prediction request to:", API_BASE_URL);
-    console.log("Payload:", payload);
+    /* =========================
+       CALL FASTAPI
+    ========================== */
 
-
-    // Call FastAPI
     const response = await fetch(
       `${API_BASE_URL}/predict`,
       {
         method: "POST",
 
         headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
+          "Content-Type":
+            "application/json"
         },
 
         body: JSON.stringify(payload)
+
       }
     );
 
 
-    // Read API response
-    const data = await response.json();
+    /* =========================
+       READ RESPONSE
+    ========================== */
+
+    const data =
+      await response.json();
 
 
-    console.log("FastAPI response:", data);
+    /* =========================
+       HANDLE API ERROR
+    ========================== */
 
-
-    // Handle FastAPI validation/server errors
     if (!response.ok) {
 
-      const message = Array.isArray(data.detail)
-        ? data.detail
-            .map((item) => item.msg)
-            .join("; ")
-        : (
-            data.detail ||
-            "Prediction failed."
-          );
+      const message =
+        Array.isArray(data.detail)
+
+          ? data.detail
+              .map(x => x.msg)
+              .join("; ")
+
+          : (
+              data.detail ||
+              "Prediction failed."
+            );
 
 
-      return res.render("index", {
-        values,
-        error: message,
-        apiBaseUrl: API_BASE_URL
-      });
+      return res.render(
+        "index",
+        {
+
+          values,
+
+          error: message,
+
+          apiBaseUrl:
+            API_BASE_URL
+
+        }
+      );
+
     }
 
 
-    // Successful prediction
-    return res.render("result", {
-      result: data,
-      customer: values
-    });
+    /* =========================
+       SUCCESS
+    ========================== */
+
+    res.render(
+      "result",
+      {
+
+        result: data,
+
+        customer: values,
+
+        apiBaseUrl:
+          API_BASE_URL
+
+      }
+    );
 
 
   } catch (err) {
 
-    console.error("Prediction API error:", err);
+    console.error(
+      "Prediction API error:",
+      err
+    );
 
 
-    return res.render("index", {
-      values,
+    res.render(
+      "index",
+      {
 
-      error:
-        `Unable to reach the prediction API. ` +
-        `Backend: ${API_BASE_URL}. ` +
-        `Please check that the FastAPI Render service is running.`,
+        values,
 
-      apiBaseUrl: API_BASE_URL
-    });
+        error:
+          `Unable to reach the prediction API at ${API_BASE_URL}. Please check that the FastAPI backend is running.`,
+
+        apiBaseUrl:
+          API_BASE_URL
+
+      }
+    );
+
   }
-});
-
-
-// =========================
-// ERROR HANDLER
-// =========================
-
-app.use((err, req, res, next) => {
-
-  console.error("Unexpected server error:", err);
-
-  res.status(500).send(
-    "Internal server error. Please check the frontend logs."
-  );
-});
-
-
-// =========================
-// START SERVER
-// =========================
-
-app.listen(PORT, () => {
-
-  console.log(
-    `Churn ESG frontend running on port ${PORT}`
-  );
-
-  console.log(
-    `FastAPI backend configured at: ${API_BASE_URL}`
-  );
 
 });
+
+
+/* =========================
+   START SERVER
+========================= */
+
+app.listen(
+  PORT,
+  "0.0.0.0",
+  () => {
+
+    console.log(
+      `Churn ESG frontend running on port ${PORT}`
+    );
+
+    console.log(
+      `FastAPI backend configured at ${API_BASE_URL}`
+    );
+
+  }
+);
