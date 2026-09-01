@@ -3,160 +3,766 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Churn Prediction + ESG</title>
+
   <link rel="stylesheet" href="/style.css">
 </head>
+
 <body>
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+
   <header class="hero">
+
     <div>
-      <div class="eyebrow">MBA Development & Sustainable Finance</div>
-      <h1>Customer Churn Prediction</h1>
-      <p>Predict churn risk and identify the customer's ESG / eco-preference segment.</p>
+
+      <div class="eyebrow">
+        MBA Development & Sustainable Finance
+      </div>
+
+      <h1>
+        Customer Churn Prediction
+      </h1>
+
+      <p>
+        Predict churn risk and identify the customer's ESG / eco-preference segment.
+      </p>
+
     </div>
-    <div class="status">FastAPI: <span><%= apiBaseUrl %></span></div>
+
+
+    <div class="status">
+      FastAPI:
+      <span><%= apiBaseUrl %></span>
+    </div>
+
   </header>
 
+
+  <!-- =========================
+       MAIN CONTENT
+  ========================== -->
+
   <main class="container">
+
+
+    <!-- API ERROR -->
+
     <% if (error) { %>
-      <div class="alert"><strong>API Error:</strong> <%= error %></div>
+
+      <div class="alert">
+
+        <strong>API Error:</strong>
+
+        <%= error %>
+
+      </div>
+
     <% } %>
 
+
+    <!-- =========================
+         CUSTOMER FORM
+    ========================== -->
+
     <form action="/predict" method="POST">
+
+
+      <!-- =========================
+           SECTION 01
+      ========================== -->
+
       <section class="card">
+
         <div class="section-title">
+
           <span>01</span>
-          <div><h2>Demographic Information</h2><p>Basic customer profile</p></div>
+
+          <div>
+
+            <h2>
+              Demographic Information
+            </h2>
+
+            <p>
+              Basic customer profile
+            </p>
+
+          </div>
+
         </div>
+
 
         <div class="grid">
-          <label>Gender
-            <select name="gender">
-              <option value="Female" <%= values.gender === "Female" ? "selected" : "" %>>Female</option>
-              <option value="Male" <%= values.gender === "Male" ? "selected" : "" %>>Male</option>
+
+
+          <!-- Gender -->
+
+          <label>
+
+            Gender
+
+            <select name="gender" required>
+
+              <option
+                value="Female"
+                <%= values.gender === "Female" ? "selected" : "" %>
+              >
+                Female
+              </option>
+
+              <option
+                value="Male"
+                <%= values.gender === "Male" ? "selected" : "" %>
+              >
+                Male
+              </option>
+
             </select>
+
           </label>
 
-          <label>Senior Citizen
-            <select name="SeniorCitizen">
-              <option value="0" <%= values.SeniorCitizen == "0" ? "selected" : "" %>>No</option>
-              <option value="1" <%= values.SeniorCitizen == "1" ? "selected" : "" %>>Yes</option>
+
+          <!-- Senior Citizen -->
+
+          <label>
+
+            Senior Citizen
+
+            <select name="SeniorCitizen" required>
+
+              <option
+                value="0"
+                <%= String(values.SeniorCitizen) === "0" ? "selected" : "" %>
+              >
+                No
+              </option>
+
+              <option
+                value="1"
+                <%= String(values.SeniorCitizen) === "1" ? "selected" : "" %>
+              >
+                Yes
+              </option>
+
             </select>
+
           </label>
 
-          <label>Partner
-            <select name="Partner">
-              <option value="Yes" <%= values.Partner === "Yes" ? "selected" : "" %>>Yes</option>
-              <option value="No" <%= values.Partner === "No" ? "selected" : "" %>>No</option>
+
+          <!-- Partner -->
+
+          <label>
+
+            Partner
+
+            <select name="Partner" required>
+
+              <option
+                value="Yes"
+                <%= values.Partner === "Yes" ? "selected" : "" %>
+              >
+                Yes
+              </option>
+
+              <option
+                value="No"
+                <%= values.Partner === "No" ? "selected" : "" %>
+              >
+                No
+              </option>
+
             </select>
+
           </label>
 
-          <label>Dependents
-            <select name="Dependents">
-              <option value="Yes" <%= values.Dependents === "Yes" ? "selected" : "" %>>Yes</option>
-              <option value="No" <%= values.Dependents === "No" ? "selected" : "" %>>No</option>
+
+          <!-- Dependents -->
+
+          <label>
+
+            Dependents
+
+            <select name="Dependents" required>
+
+              <option
+                value="Yes"
+                <%= values.Dependents === "Yes" ? "selected" : "" %>
+              >
+                Yes
+              </option>
+
+              <option
+                value="No"
+                <%= values.Dependents === "No" ? "selected" : "" %>
+              >
+                No
+              </option>
+
             </select>
+
           </label>
+
         </div>
+
       </section>
 
+
+
+      <!-- =========================
+           SECTION 02
+      ========================== -->
+
       <section class="card">
+
         <div class="section-title">
+
           <span>02</span>
-          <div><h2>Account & Billing</h2><p>Contract, tenure and payment details</p></div>
+
+          <div>
+
+            <h2>
+              Account & Billing
+            </h2>
+
+            <p>
+              Contract, tenure and payment details
+            </p>
+
+          </div>
+
         </div>
+
 
         <div class="grid">
-          <label>Tenure (months)
-            <input type="number" name="tenure" min="0" max="100" step="1" value="<%= values.tenure %>" required>
+
+
+          <!-- Tenure -->
+
+          <label>
+
+            Tenure (months)
+
+            <input
+              type="number"
+              name="tenure"
+              min="0"
+              max="100"
+              step="1"
+              value="<%= values.tenure %>"
+              required
+            >
+
           </label>
 
-          <label>Contract
-            <select name="Contract">
-              <option value="Month-to-month" <%= values.Contract === "Month-to-month" ? "selected" : "" %>>Month-to-month</option>
-              <option value="One year" <%= values.Contract === "One year" ? "selected" : "" %>>One year</option>
-              <option value="Two year" <%= values.Contract === "Two year" ? "selected" : "" %>>Two year</option>
+
+          <!-- Contract -->
+
+          <label>
+
+            Contract
+
+            <select name="Contract" required>
+
+              <option
+                value="Month-to-month"
+                <%= values.Contract === "Month-to-month" ? "selected" : "" %>
+              >
+                Month-to-month
+              </option>
+
+              <option
+                value="One year"
+                <%= values.Contract === "One year" ? "selected" : "" %>
+              >
+                One year
+              </option>
+
+              <option
+                value="Two year"
+                <%= values.Contract === "Two year" ? "selected" : "" %>
+              >
+                Two year
+              </option>
+
             </select>
+
           </label>
 
-          <label>Paperless Billing
-            <select name="PaperlessBilling">
-              <option value="Yes" <%= values.PaperlessBilling === "Yes" ? "selected" : "" %>>Yes</option>
-              <option value="No" <%= values.PaperlessBilling === "No" ? "selected" : "" %>>No</option>
+
+          <!-- Paperless Billing -->
+
+          <label>
+
+            Paperless Billing
+
+            <select name="PaperlessBilling" required>
+
+              <option
+                value="Yes"
+                <%= values.PaperlessBilling === "Yes" ? "selected" : "" %>
+              >
+                Yes
+              </option>
+
+              <option
+                value="No"
+                <%= values.PaperlessBilling === "No" ? "selected" : "" %>
+              >
+                No
+              </option>
+
             </select>
+
           </label>
 
-          <label>Payment Method
-            <select name="PaymentMethod">
-              <option>Electronic check</option>
-              <option>Mailed check</option>
-              <option>Bank transfer (automatic)</option>
-              <option>Credit card (automatic)</option>
+
+          <!-- Payment Method -->
+
+          <label>
+
+            Payment Method
+
+            <select name="PaymentMethod" required>
+
+              <option
+                value="Electronic check"
+                <%= values.PaymentMethod === "Electronic check" ? "selected" : "" %>
+              >
+                Electronic check
+              </option>
+
+              <option
+                value="Mailed check"
+                <%= values.PaymentMethod === "Mailed check" ? "selected" : "" %>
+              >
+                Mailed check
+              </option>
+
+              <option
+                value="Bank transfer (automatic)"
+                <%= values.PaymentMethod === "Bank transfer (automatic)" ? "selected" : "" %>
+              >
+                Bank transfer (automatic)
+              </option>
+
+              <option
+                value="Credit card (automatic)"
+                <%= values.PaymentMethod === "Credit card (automatic)" ? "selected" : "" %>
+              >
+                Credit card (automatic)
+              </option>
+
             </select>
+
           </label>
 
-          <label>Monthly Charges
-            <input type="number" name="MonthlyCharges" min="0" step="0.01" value="<%= values.MonthlyCharges %>" required>
+
+          <!-- Monthly Charges -->
+
+          <label>
+
+            Monthly Charges
+
+            <input
+              type="number"
+              name="MonthlyCharges"
+              min="0"
+              step="0.01"
+              value="<%= values.MonthlyCharges %>"
+              required
+            >
+
           </label>
 
-          <label>Total Charges
-            <input type="number" name="TotalCharges" min="0" step="0.01" value="<%= values.TotalCharges %>" required>
+
+          <!-- Total Charges -->
+
+          <label>
+
+            Total Charges
+
+            <input
+              type="number"
+              name="TotalCharges"
+              min="0"
+              step="0.01"
+              value="<%= values.TotalCharges %>"
+              required
+            >
+
           </label>
+
         </div>
+
       </section>
+
+
+
+      <!-- =========================
+           SECTION 03
+      ========================== -->
 
       <section class="card">
+
         <div class="section-title">
+
           <span>03</span>
-          <div><h2>Subscribed Services</h2><p>Current services used by the customer</p></div>
+
+          <div>
+
+            <h2>
+              Subscribed Services
+            </h2>
+
+            <p>
+              Current services used by the customer
+            </p>
+
+          </div>
+
         </div>
+
 
         <div class="grid">
-          <label>Phone Service
-            <select name="PhoneService"><option>Yes</option><option>No</option></select>
+
+
+          <!-- Phone Service -->
+
+          <label>
+
+            Phone Service
+
+            <select name="PhoneService" required>
+
+              <option
+                value="Yes"
+                <%= values.PhoneService === "Yes" ? "selected" : "" %>
+              >
+                Yes
+              </option>
+
+              <option
+                value="No"
+                <%= values.PhoneService === "No" ? "selected" : "" %>
+              >
+                No
+              </option>
+
+            </select>
+
           </label>
 
-          <label>Multiple Lines
-            <select name="MultipleLines"><option>No</option><option>Yes</option><option>No phone service</option></select>
+
+          <!-- Multiple Lines -->
+
+          <label>
+
+            Multiple Lines
+
+            <select name="MultipleLines" required>
+
+              <option
+                value="No"
+                <%= values.MultipleLines === "No" ? "selected" : "" %>
+              >
+                No
+              </option>
+
+              <option
+                value="Yes"
+                <%= values.MultipleLines === "Yes" ? "selected" : "" %>
+              >
+                Yes
+              </option>
+
+              <option
+                value="No phone service"
+                <%= values.MultipleLines === "No phone service" ? "selected" : "" %>
+              >
+                No phone service
+              </option>
+
+            </select>
+
           </label>
 
-          <label>Internet Service
-            <select name="InternetService"><option>Fiber optic</option><option>DSL</option><option>No</option></select>
+
+          <!-- Internet Service -->
+
+          <label>
+
+            Internet Service
+
+            <select name="InternetService" required>
+
+              <option
+                value="Fiber optic"
+                <%= values.InternetService === "Fiber optic" ? "selected" : "" %>
+              >
+                Fiber optic
+              </option>
+
+              <option
+                value="DSL"
+                <%= values.InternetService === "DSL" ? "selected" : "" %>
+              >
+                DSL
+              </option>
+
+              <option
+                value="No"
+                <%= values.InternetService === "No" ? "selected" : "" %>
+              >
+                No
+              </option>
+
+            </select>
+
           </label>
 
-          <label>Online Security
-            <select name="OnlineSecurity"><option>No</option><option>Yes</option><option>No internet service</option></select>
+
+          <!-- Online Security -->
+
+          <label>
+
+            Online Security
+
+            <select name="OnlineSecurity" required>
+
+              <option
+                value="No"
+                <%= values.OnlineSecurity === "No" ? "selected" : "" %>
+              >
+                No
+              </option>
+
+              <option
+                value="Yes"
+                <%= values.OnlineSecurity === "Yes" ? "selected" : "" %>
+              >
+                Yes
+              </option>
+
+              <option
+                value="No internet service"
+                <%= values.OnlineSecurity === "No internet service" ? "selected" : "" %>
+              >
+                No internet service
+              </option>
+
+            </select>
+
           </label>
 
-          <label>Online Backup
-            <select name="OnlineBackup"><option>Yes</option><option>No</option><option>No internet service</option></select>
+
+          <!-- Online Backup -->
+
+          <label>
+
+            Online Backup
+
+            <select name="OnlineBackup" required>
+
+              <option
+                value="Yes"
+                <%= values.OnlineBackup === "Yes" ? "selected" : "" %>
+              >
+                Yes
+              </option>
+
+              <option
+                value="No"
+                <%= values.OnlineBackup === "No" ? "selected" : "" %>
+              >
+                No
+              </option>
+
+              <option
+                value="No internet service"
+                <%= values.OnlineBackup === "No internet service" ? "selected" : "" %>
+              >
+                No internet service
+              </option>
+
+            </select>
+
           </label>
 
-          <label>Device Protection
-            <select name="DeviceProtection"><option>No</option><option>Yes</option><option>No internet service</option></select>
+
+          <!-- Device Protection -->
+
+          <label>
+
+            Device Protection
+
+            <select name="DeviceProtection" required>
+
+              <option
+                value="No"
+                <%= values.DeviceProtection === "No" ? "selected" : "" %>
+              >
+                No
+              </option>
+
+              <option
+                value="Yes"
+                <%= values.DeviceProtection === "Yes" ? "selected" : "" %>
+              >
+                Yes
+              </option>
+
+              <option
+                value="No internet service"
+                <%= values.DeviceProtection === "No internet service" ? "selected" : "" %>
+              >
+                No internet service
+              </option>
+
+            </select>
+
           </label>
 
-          <label>Tech Support
-            <select name="TechSupport"><option>No</option><option>Yes</option><option>No internet service</option></select>
+
+          <!-- Tech Support -->
+
+          <label>
+
+            Tech Support
+
+            <select name="TechSupport" required>
+
+              <option
+                value="No"
+                <%= values.TechSupport === "No" ? "selected" : "" %>
+              >
+                No
+              </option>
+
+              <option
+                value="Yes"
+                <%= values.TechSupport === "Yes" ? "selected" : "" %>
+              >
+                Yes
+              </option>
+
+              <option
+                value="No internet service"
+                <%= values.TechSupport === "No internet service" ? "selected" : "" %>
+              >
+                No internet service
+              </option>
+
+            </select>
+
           </label>
 
-          <label>Streaming TV
-            <select name="StreamingTV"><option>Yes</option><option>No</option><option>No internet service</option></select>
+
+          <!-- Streaming TV -->
+
+          <label>
+
+            Streaming TV
+
+            <select name="StreamingTV" required>
+
+              <option
+                value="Yes"
+                <%= values.StreamingTV === "Yes" ? "selected" : "" %>
+              >
+                Yes
+              </option>
+
+              <option
+                value="No"
+                <%= values.StreamingTV === "No" ? "selected" : "" %>
+              >
+                No
+              </option>
+
+              <option
+                value="No internet service"
+                <%= values.StreamingTV === "No internet service" ? "selected" : "" %>
+              >
+                No internet service
+              </option>
+
+            </select>
+
           </label>
 
-          <label>Streaming Movies
-            <select name="StreamingMovies"><option>No</option><option>Yes</option><option>No internet service</option></select>
+
+          <!-- Streaming Movies -->
+
+          <label>
+
+            Streaming Movies
+
+            <select name="StreamingMovies" required>
+
+              <option
+                value="No"
+                <%= values.StreamingMovies === "No" ? "selected" : "" %>
+              >
+                No
+              </option>
+
+              <option
+                value="Yes"
+                <%= values.StreamingMovies === "Yes" ? "selected" : "" %>
+              >
+                Yes
+              </option>
+
+              <option
+                value="No internet service"
+                <%= values.StreamingMovies === "No internet service" ? "selected" : "" %>
+              >
+                No internet service
+              </option>
+
+            </select>
+
           </label>
+
         </div>
+
       </section>
+
+
+
+      <!-- =========================
+           ESG + SUBMIT
+      ========================== -->
 
       <div class="actions">
+
         <div>
-          <strong>ESG preference is calculated automatically</strong>
-          <small>Paperless billing and streaming behaviour are used as the project's stated ESG proxy.</small>
+
+          <strong>
+            ESG preference is calculated automatically
+          </strong>
+
+          <small>
+            Paperless billing and streaming behaviour are used as the project's stated ESG proxy.
+          </small>
+
         </div>
-        <button type="submit">Predict Churn →</button>
+
+
+        <button type="submit">
+          Predict Churn →
+        </button>
+
       </div>
+
+
     </form>
+
   </main>
+
 </body>
 </html>
