@@ -1,77 +1,307 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prediction Result</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Prediction Result | Churn + ESG</title>
+
   <link rel="stylesheet" href="/style.css">
 </head>
+
+
 <body>
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+
   <header class="hero compact">
+
     <div>
-      <div class="eyebrow">Prediction Complete</div>
-      <h1>Customer Risk Assessment</h1>
-      <p>Model output from the Churn + ESG decision-support API.</p>
+
+      <div class="eyebrow">
+        Prediction Complete
+      </div>
+
+      <h1>
+        Customer Risk Assessment
+      </h1>
+
+      <p>
+        Model output from the Churn + ESG decision-support API.
+      </p>
+
     </div>
+
   </header>
 
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+
   <main class="container">
+
+
+    <!-- =========================
+         RESULT CARDS
+    ========================== -->
+
     <section class="result-grid">
-      <div class="result-card <%= result.churn_label === 'Yes' ? 'risk' : 'safe' %>">
-        <span class="result-label">Churn Probability</span>
-        <strong><%= (result.churn_probability * 100).toFixed(1) %>%</strong>
-        <span class="pill"><%= result.churn_label === "Yes" ? "High Risk / Churn Predicted" : "Low Risk / Retention Predicted" %></span>
-      </div>
 
-      <div class="result-card">
-        <span class="result-label">Customer Segment</span>
-        <strong class="segment"><%= result.segment %></strong>
-        <span class="pill neutral">K-Means assignment</span>
-      </div>
 
-      <div class="result-card">
-        <span class="result-label">Eco Preference</span>
-        <strong><%= result.eco_preference %> / 2</strong>
-        <span class="pill neutral">
-          <%= result.eco_preference === 2 ? "High" : result.eco_preference === 1 ? "Moderate" : "Low" %>
+      <!-- CHURN PROBABILITY -->
+
+      <div
+        class="result-card <%= result.churn_label === 'Yes' ? 'risk' : 'safe' %>"
+      >
+
+        <span class="result-label">
+          Churn Probability
         </span>
+
+        <strong>
+          <%= (Number(result.churn_probability) * 100).toFixed(1) %>%
+        </strong>
+
+        <span class="pill">
+
+          <%= result.churn_label === "Yes"
+            ? "High Risk / Churn Predicted"
+            : "Low Risk / Retention Predicted"
+          %>
+
+        </span>
+
       </div>
+
+
+
+      <!-- CUSTOMER SEGMENT -->
+
+      <div class="result-card">
+
+        <span class="result-label">
+          Customer Segment
+        </span>
+
+        <strong class="segment">
+          <%= result.segment %>
+        </strong>
+
+        <span class="pill neutral">
+          K-Means assignment
+        </span>
+
+      </div>
+
+
+
+      <!-- ECO PREFERENCE -->
+
+      <div class="result-card">
+
+        <span class="result-label">
+          Eco Preference
+        </span>
+
+        <strong>
+          <%= result.eco_preference %> / 2
+        </strong>
+
+        <span class="pill neutral">
+
+          <%= Number(result.eco_preference) === 2
+            ? "High"
+            : Number(result.eco_preference) === 1
+              ? "Moderate"
+              : "Low"
+          %>
+
+        </span>
+
+      </div>
+
     </section>
+
+
+
+    <!-- =========================
+         MANAGERIAL INTERPRETATION
+    ========================== -->
 
     <section class="card">
+
       <div class="section-title">
-        <span>04</span>
-        <div><h2>Managerial Interpretation</h2><p>Use the model output as decision support, not as a causal conclusion.</p></div>
+
+        <span>
+          04
+        </span>
+
+        <div>
+
+          <h2>
+            Managerial Interpretation
+          </h2>
+
+          <p>
+            Use the model output as decision support, not as a causal conclusion.
+          </p>
+
+        </div>
+
       </div>
+
+
 
       <% if (result.churn_label === "Yes") { %>
+
         <div class="insight risk-text">
-          <h3>Retention attention recommended</h3>
-          <p>This customer has been classified as likely to churn. Consider targeted retention actions based on contract, tenure, charges, services and the assigned segment.</p>
+
+          <h3>
+            Retention attention recommended
+          </h3>
+
+          <p>
+            This customer has been classified as likely to churn.
+            Consider targeted retention actions based on contract,
+            tenure, charges, services and the assigned segment.
+          </p>
+
         </div>
+
       <% } else { %>
+
         <div class="insight safe-text">
-          <h3>Retention risk appears lower</h3>
-          <p>This customer has been classified as unlikely to churn at the default 0.5 threshold. Continue engagement and monitor changes in behaviour.</p>
+
+          <h3>
+            Retention risk appears lower
+          </h3>
+
+          <p>
+            This customer has been classified as unlikely to churn
+            at the default 0.5 threshold. Continue engagement and
+            monitor changes in behaviour.
+          </p>
+
         </div>
+
       <% } %>
 
+
+
+      <!-- =========================
+           CUSTOMER DETAILS
+      ========================== -->
+
       <div class="mini-grid">
-        <div><span>Contract</span><strong><%= customer.Contract %></strong></div>
-        <div><span>Tenure</span><strong><%= customer.tenure %> months</strong></div>
-        <div><span>Monthly Charges</span><strong>₹<%= Number(customer.MonthlyCharges).toFixed(2) %></strong></div>
-        <div><span>Payment Method</span><strong><%= customer.PaymentMethod %></strong></div>
+
+        <div>
+
+          <span>
+            Contract
+          </span>
+
+          <strong>
+            <%= customer.Contract %>
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Tenure
+          </span>
+
+          <strong>
+            <%= customer.tenure %> months
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Monthly Charges
+          </span>
+
+          <strong>
+            ₹<%= Number(customer.MonthlyCharges).toFixed(2) %>
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Payment Method
+          </span>
+
+          <strong>
+            <%= customer.PaymentMethod %>
+          </strong>
+
+        </div>
+
       </div>
+
     </section>
 
+
+
+    <!-- =========================
+         ACTION BUTTONS
+    ========================== -->
+
     <div class="actions bottom">
-      <a href="/" class="secondary">← Test Another Customer</a>
-      <a href="http://localhost:8000/docs" target="_blank" class="secondary">Open API Docs</a>
+
+      <a
+        href="/"
+        class="secondary"
+      >
+        ← Test Another Customer
+      </a>
+
+
+      <a
+        href="<%= apiBaseUrl %>/docs"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="secondary"
+      >
+        Open API Docs
+      </a>
+
     </div>
 
+
+
+    <!-- =========================
+         DISCLAIMER
+    ========================== -->
+
     <p class="disclaimer">
-      ESG note: the project specification defines eco_preference as a behavioural proxy because the public Telco dataset does not contain a direct ESG attribute.
+
+      ESG note: the project specification defines
+      <strong>eco_preference</strong> as a behavioural proxy
+      because the public Telco dataset does not contain a direct
+      ESG attribute.
+
     </p>
+
+
   </main>
+
 </body>
+
 </html>
