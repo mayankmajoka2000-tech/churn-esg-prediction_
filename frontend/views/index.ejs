@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Churn Prediction + ESG</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <div class="eyebrow">MBA Development & Sustainable Finance</div>
+      <h1>Customer Churn Prediction</h1>
+      <p>Predict churn risk and identify the customer's ESG / eco-preference segment.</p>
+    </div>
+    <div class="status">FastAPI: <span><%= apiBaseUrl %></span></div>
+  </header>
+
+  <main class="container">
+    <% if (error) { %>
+      <div class="alert"><strong>API Error:</strong> <%= error %></div>
+    <% } %>
+
+    <form action="/predict" method="POST">
+      <section class="card">
+        <div class="section-title">
+          <span>01</span>
+          <div><h2>Demographic Information</h2><p>Basic customer profile</p></div>
+        </div>
+
+        <div class="grid">
+          <label>Gender
+            <select name="gender">
+              <option value="Female" <%= values.gender === "Female" ? "selected" : "" %>>Female</option>
+              <option value="Male" <%= values.gender === "Male" ? "selected" : "" %>>Male</option>
+            </select>
+          </label>
+
+          <label>Senior Citizen
+            <select name="SeniorCitizen">
+              <option value="0" <%= values.SeniorCitizen == "0" ? "selected" : "" %>>No</option>
+              <option value="1" <%= values.SeniorCitizen == "1" ? "selected" : "" %>>Yes</option>
+            </select>
+          </label>
+
+          <label>Partner
+            <select name="Partner">
+              <option value="Yes" <%= values.Partner === "Yes" ? "selected" : "" %>>Yes</option>
+              <option value="No" <%= values.Partner === "No" ? "selected" : "" %>>No</option>
+            </select>
+          </label>
+
+          <label>Dependents
+            <select name="Dependents">
+              <option value="Yes" <%= values.Dependents === "Yes" ? "selected" : "" %>>Yes</option>
+              <option value="No" <%= values.Dependents === "No" ? "selected" : "" %>>No</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <span>02</span>
+          <div><h2>Account & Billing</h2><p>Contract, tenure and payment details</p></div>
+        </div>
+
+        <div class="grid">
+          <label>Tenure (months)
+            <input type="number" name="tenure" min="0" max="100" step="1" value="<%= values.tenure %>" required>
+          </label>
+
+          <label>Contract
+            <select name="Contract">
+              <option value="Month-to-month" <%= values.Contract === "Month-to-month" ? "selected" : "" %>>Month-to-month</option>
+              <option value="One year" <%= values.Contract === "One year" ? "selected" : "" %>>One year</option>
+              <option value="Two year" <%= values.Contract === "Two year" ? "selected" : "" %>>Two year</option>
+            </select>
+          </label>
+
+          <label>Paperless Billing
+            <select name="PaperlessBilling">
+              <option value="Yes" <%= values.PaperlessBilling === "Yes" ? "selected" : "" %>>Yes</option>
+              <option value="No" <%= values.PaperlessBilling === "No" ? "selected" : "" %>>No</option>
+            </select>
+          </label>
+
+          <label>Payment Method
+            <select name="PaymentMethod">
+              <option>Electronic check</option>
+              <option>Mailed check</option>
+              <option>Bank transfer (automatic)</option>
+              <option>Credit card (automatic)</option>
+            </select>
+          </label>
+
+          <label>Monthly Charges
+            <input type="number" name="MonthlyCharges" min="0" step="0.01" value="<%= values.MonthlyCharges %>" required>
+          </label>
+
+          <label>Total Charges
+            <input type="number" name="TotalCharges" min="0" step="0.01" value="<%= values.TotalCharges %>" required>
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <span>03</span>
+          <div><h2>Subscribed Services</h2><p>Current services used by the customer</p></div>
+        </div>
+
+        <div class="grid">
+          <label>Phone Service
+            <select name="PhoneService"><option>Yes</option><option>No</option></select>
+          </label>
+
+          <label>Multiple Lines
+            <select name="MultipleLines"><option>No</option><option>Yes</option><option>No phone service</option></select>
+          </label>
+
+          <label>Internet Service
+            <select name="InternetService"><option>Fiber optic</option><option>DSL</option><option>No</option></select>
+          </label>
+
+          <label>Online Security
+            <select name="OnlineSecurity"><option>No</option><option>Yes</option><option>No internet service</option></select>
+          </label>
+
+          <label>Online Backup
+            <select name="OnlineBackup"><option>Yes</option><option>No</option><option>No internet service</option></select>
+          </label>
+
+          <label>Device Protection
+            <select name="DeviceProtection"><option>No</option><option>Yes</option><option>No internet service</option></select>
+          </label>
+
+          <label>Tech Support
+            <select name="TechSupport"><option>No</option><option>Yes</option><option>No internet service</option></select>
+          </label>
+
+          <label>Streaming TV
+            <select name="StreamingTV"><option>Yes</option><option>No</option><option>No internet service</option></select>
+          </label>
+
+          <label>Streaming Movies
+            <select name="StreamingMovies"><option>No</option><option>Yes</option><option>No internet service</option></select>
+          </label>
+        </div>
+      </section>
+
+      <div class="actions">
+        <div>
+          <strong>ESG preference is calculated automatically</strong>
+          <small>Paperless billing and streaming behaviour are used as the project's stated ESG proxy.</small>
+        </div>
+        <button type="submit">Predict Churn →</button>
+      </div>
+    </form>
+  </main>
+</body>
+</html>
